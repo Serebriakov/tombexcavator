@@ -1,0 +1,41 @@
+include (FindSubversion)
+
+#set (PROJECT_SOURCE_DIR .)
+
+#
+# Check for SVN and get current revision
+#
+
+set (DOT_SVN_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/.svn)
+set (REV_TXT_FILE  ${CMAKE_CURRENT_SOURCE_DIR}/rev.txt)
+
+message (STATUS "DOT_SVN_DIR ${DOT_SVN_DIR}")
+
+IF (EXISTS ${DOT_SVN_DIR})
+  IF(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+    EXECUTE_PROCESS(COMMAND "subwcrev" "${PROJECT_SOURCE_DIR}" OUTPUT_VARIABLE SVN_REV)
+    STRING(REGEX REPLACE ".* committed at revision ([0-9]+).*" "\\1" SVN_REV "${SVN_REV}")
+    IF(SVN_REV)
+      SET(BK_WC_REVISION "${SVN_REV}" CACHE STRING "" FORCE)
+      # WINDOWS: messages are obstructive pop-ups, use them only for debug
+      # MESSAGE("-- Current SVN revision is ${BK_WC_REVISION}")
+    ELSE(SVN_REV)
+      SET(BK_WC_REVISION "" CACHE STRING "set SVN revision.")
+    ENDIF(SVN_REV)
+  ELSE(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+    FIND_PACKAGE(Subversion REQUIRED)
+    IF(Subversion_FOUND)
+      Subversion_WC_INFO(${PROJECT_SOURCE_DIR} BK)
+      MESSAGE("-- Current SVN revision is ${BK_WC_REVISION}")
+    ELSE(Subversion_FOUND)
+      MESSAGE(SEND_ERROR "Could not determine SVN revision")
+    ENDIF(Subversion_FOUND)
+  ENDIF(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+  SET(BK_PACKAGE_VERSION ${V_MAJOR}.${V_MINOR}.${V_PATCH})
+  SET(BK_DEVELOPMENT_VERSION 1)
+  FILE(WRITE ${REV_TXT_FILE} "${BK_WC_REVISION}")
+ELSE (EXISTS ${DOT_SVN_DIR})
+  SET(BK_PACKAGE_VERSION ${V_MAJOR}.${V_MINOR}.${V_PATCH})
+  SET(BK_WC_REVISION 0)
+  FILE(READ "${REV_TXT_FILE}" BK_WC_REVISION)
+ENDIF ()

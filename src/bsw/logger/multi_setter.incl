@@ -1,0 +1,157 @@
+void set () {}
+
+template <class T1>
+void set (const T1& a1){
+std::ostringstream os;
+os << a1;
+m_record.m_message = os.str ();}
+template <class T1, class T2>
+void set (const T1& a1, const T2& a2){
+std::ostringstream os;
+os << a1 << a2;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3>
+void set (const T1& a1, const T2& a2, const T3& a3){
+std::ostringstream os;
+os << a1 << a2 << a3;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26, class T27>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26, const T27& a27){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26 << a27;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26, class T27, class T28>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26, const T27& a27, const T28& a28){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26 << a27 << a28;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26, class T27, class T28, class T29>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26, const T27& a27, const T28& a28, const T29& a29){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26 << a27 << a28 << a29;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26, class T27, class T28, class T29, class T30>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26, const T27& a27, const T28& a28, const T29& a29, const T30& a30){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26 << a27 << a28 << a29 << a30;
+m_record.m_message = os.str ();}
+template <class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15, class T16, class T17, class T18, class T19, class T20, class T21, class T22, class T23, class T24, class T25, class T26, class T27, class T28, class T29, class T30, class T31>
+void set (const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9, const T10& a10, const T11& a11, const T12& a12, const T13& a13, const T14& a14, const T15& a15, const T16& a16, const T17& a17, const T18& a18, const T19& a19, const T20& a20, const T21& a21, const T22& a22, const T23& a23, const T24& a24, const T25& a25, const T26& a26, const T27& a27, const T28& a28, const T29& a29, const T30& a30, const T31& a31){
+std::ostringstream os;
+os << a1 << a2 << a3 << a4 << a5 << a6 << a7 << a8 << a9 << a10 << a11 << a12 << a13 << a14 << a15 << a16 << a17 << a18 << a19 << a20 << a21 << a22 << a23 << a24 << a25 << a26 << a27 << a28 << a29 << a30 << a31;
+m_record.m_message = os.str ();}
