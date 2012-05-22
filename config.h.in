@@ -1,0 +1,8 @@
+#ifndef __TOMB_EXCAVATOR_CONFIG_H__
+#define __TOMB_EXCAVATOR_CONFIG_H__
+
+#cmakedefine TOMB_EXCAVATOR_WITH_SDL
+#cmakedefine TOMB_EXCAVATOR_WITH_QT
+
+
+#endif

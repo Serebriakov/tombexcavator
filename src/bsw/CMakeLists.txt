@@ -1,3 +1,23 @@
+set (io_src
+  io/ios.cpp
+  io/input_stream.cpp
+  io/input_stream_decorator.cpp
+)
+
+set (io_hdr
+  io/ios.hpp
+  io/input_stream.hpp
+  io/input_stream_decorator.hpp
+)
+# ======================================
+set (fs_src
+  fs/file.cpp
+)
+
+set (fs_hdr
+  fs/file.hpp
+)
+# ======================================
 set (time_src
   time/time.cpp
 )
@@ -113,7 +133,7 @@ set (generic_hdr
 # housekeeping
 # ========================
 
-set (modules  mt logger time err ipc generic)
+set (modules  mt logger time err ipc generic fs io)
 
 set (src )
 set (hdr )
