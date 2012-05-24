@@ -13,6 +13,8 @@ namespace pict
   class PICT_API allocator_c
   {
   public:
+    allocator_c ();
+
     virtual ~allocator_c ();
 
     virtual abstract_picture_c* create (unsigned int width,

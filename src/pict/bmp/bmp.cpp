@@ -15,6 +15,139 @@
 
 namespace pict
 {
+
+  static
+  inline
+  unsigned int pixels_row_size (unsigned int bits, unsigned int width)
+  {
+    const unsigned int wb = width*bits;
+    unsigned int r = wb / 32;
+    if (wb % 32)
+      {
+	r++;
+      }
+    return r*4;
+  }
+  template <int CHUNKS>
+  class loader_c;
+
+  template <>
+  class loader_c <8>
+  {
+  public:
+    static uint8_t load (uint8_t val, int pos)
+    {
+      assert (pos == 0);
+      return val;
+    } 
+  };
+  // =========================================================
+  template <>
+  class loader_c <4>
+  {
+  public:
+    static uint8_t load (uint8_t val, int pos)
+    {
+      static uint8_t shft [] = {
+	 4,
+	 4,
+	 4,
+	 4,
+	 0,
+	 0,
+	 0,
+	 0
+      };
+      return ((val >> shft [pos]) & 0x0F);
+    } 
+  };
+  // =========================================================
+  template <>
+  class loader_c <2>
+  {
+  public:
+    static uint8_t load (uint8_t val, int pos)
+    {
+      static uint8_t shft [] = {
+	 6,
+	 6,
+	 4,
+	 4,
+	 2,
+	 2,
+	 0,
+	 0
+      };
+      return ((val >> shft [pos]) & 0x3);
+    } 
+  };
+  // =========================================================
+  template <>
+  class loader_c <1>
+  {
+  public:
+    static uint8_t load (uint8_t val, int pos)
+    {
+      static uint8_t shft [] = {
+	 7,
+	 6,
+	 5,
+	 4,
+	 3,
+	 2,
+	 1,
+	 0
+      };
+      return (val >> shft [pos]) & 0x1;
+    } 
+  };
+  // =========================================================
+  template <unsigned int BITS>
+  class simple_pixels_reader_c
+  {
+  public:
+    typedef uint8_t pixel_t;
+  public:
+    simple_pixels_reader_c (bsw::input_stream_decorator_c& isd, unsigned int width)
+      : m_isd      (isd),
+	m_row_size (pixels_row_size (BITS, width)),
+	m_row      (m_row_size, 0),
+	m_current  (0),
+	m_chunk    (0)
+    {
+    }
+    // ---------------------------------------------------------------------------
+    void next_pixel (pixel_t& pixel)
+    {
+      if (m_chunk >= 8)
+	{
+	  m_current++;
+	  m_chunk = 0;
+	}
+      if (m_current >= m_row_size)
+	{
+	  throw std::runtime_error ("next_pixel aout of bounds");
+	}
+      pixel = loader_c <BITS>::load (m_row [m_current], m_chunk);
+      m_chunk += BITS;
+    }
+
+    void load_row ()
+    {
+      m_current = 0;
+      m_chunk   = 0;
+      m_isd.read ( (char*)&m_row [0], m_row_size);
+    }
+  private:
+    bsw::input_stream_decorator_c& m_isd;
+  protected:
+    unsigned int                   m_row_size;
+    std::vector <uint8_t>          m_row;
+    unsigned int                   m_current;
+    unsigned int                   m_chunk;
+    
+  };
+  // ====================================================================================
   struct bmpfile_header_s 
   {
     unsigned char magic[2];
@@ -33,8 +166,8 @@ namespace pict
   struct os2_info_header_s 
   {
     uint32_t  biSize;
-    uint32_t  biWidth;
-    uint32_t  biHeight; 
+    int32_t   biWidth;
+    int32_t   biHeight; 
     uint16_t  biPlanes; 
     uint16_t  biBitCount;
     os2_info_header_s  (bsw::input_stream_decorator_c& icd, uint32_t size)
@@ -49,11 +182,23 @@ namespace pict
     void operator () (bmp_info_s& bi)
     {
       bi.width  = biWidth;
-      bi.height = biHeight;
+      if (biHeight < 0)
+	{
+	  bi.height = -biHeight;
+	  bi.top_down = false;
+	}
+      else
+	{
+	  bi.height   = biHeight;
+	  bi.top_down = true;
+	}
       switch (biBitCount)
 	{
 	case 1:
 	  bi.bpp = eBPP1;
+	  break;
+	case 2:
+	  bi.bpp = eBPP2;
 	  break;
 	case 4:
 	  bi.bpp = eBPP4;
@@ -142,8 +287,11 @@ namespace pict
 		case 1:
 		  bi.colors_in_palette = 2;
 		  break;
-		case 4:
+		case 2:
 		  bi.colors_in_palette = 4;
+		  break;
+		case 4:
+		  bi.colors_in_palette = 16;
 		  break;
 		case 8:
 		  bi.colors_in_palette = 256;
@@ -452,10 +600,29 @@ namespace pict
       }
   }
   // --------------------------------------------------------------------------
-  abstract_picture_c* load_bmp (bsw::input_stream_c& inp, allocator_c* allocator)
+  template <int BITS>
+  void uncompressed_loader (bsw::input_stream_decorator_c& isd, abstract_picture_c* img, const bmp_info_s& bi)
+  {
+    simple_pixels_reader_c <BITS> rdr (isd, bi.width);
+    for (unsigned int y=0; y<bi.height; y++)
+      {
+	rdr.load_row ();
+	unsigned int inv_y = bi.top_down ? bi.height - 1 - y : y;
+
+	for (unsigned int x=0; x<bi.width; x++)
+	  {
+	    typename simple_pixels_reader_c <BITS>::pixel_t pixel;
+	    rdr.next_pixel (pixel);
+	    img->put_pixel (x, inv_y, pixel);
+	  }
+      }
+  }
+  // --------------------------------------------------------------------------
+  abstract_picture_c* load_bmp (bsw::input_stream_c& inp, allocator_c* allocator, bmp_info_s& bi)
   {
     bsw::input_stream_decorator_c isd (inp, true);
-    bmp_info_s bi;
+
+    const bsw::file_size_t stream_start = isd.tell ();
     load_bmp_info (inp, bi);
 
     bsw::file_size_t curr_pos = isd.tell ();
@@ -470,7 +637,8 @@ namespace pict
     if (num_colors > bi.colors_in_palette)
       {
 	std::ostringstream os;
-	os << "BMP file " << isd.name () << " is corrupted. Number of colors mismatch" << std::endl;
+	os << "BMP file " << isd.name () << " is corrupted. Number of colors mismatch." 
+	   << "estimated number of colors " << num_colors << ", desired number of colors " << bi.colors_in_palette;
 	throw std::runtime_error (os.str ());
       }
     
@@ -479,6 +647,7 @@ namespace pict
     switch (bi.bpp)
       {
       case eBPP1:
+      case eBPP2:
       case eBPP4:
       case eBPP8:
 	bpp = eBPP8;
@@ -506,7 +675,24 @@ namespace pict
 	pal.push_back (color);
       }
     img->set_palette (pal);
-    
+
+    isd.seek (stream_start + bi.offset_to_data);
+
+    switch (bi.bpp)
+      {
+      case eBPP1:
+	uncompressed_loader <1> (isd, img, bi);
+	break;
+      case eBPP2:
+	uncompressed_loader <2> (isd, img, bi);
+	break;
+      case eBPP4:
+	uncompressed_loader <4> (isd, img, bi);
+	break;
+      case eBPP8:
+	uncompressed_loader <8> (isd, img, bi);
+	break;
+      }
     return img;
   }
 } // ns bmp

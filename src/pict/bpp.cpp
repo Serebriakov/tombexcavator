@@ -10,6 +10,8 @@ namespace pict
       {
       case eBPP1:
 	return 1;
+      case eBPP2:
+	return 1;
       case eBPP4:
 	return 4;
       case eBPP8:

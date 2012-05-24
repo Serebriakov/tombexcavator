@@ -50,16 +50,15 @@ namespace pict
   // ----------------------------------------------------------------------
   void sdl_picture_c::_set_palette (const rgba_vector_t& pal, std::size_t from, std::size_t count)
   {
-    assert (pal.size () < 256);
-    SDL_Color colors [256];
-    std::memset (colors, 0, sizeof (colors));
-    for (std::size_t i=0; i<pal.size (); i++)
+    SDL_Palette* palette = (m_surface->format)->palette;
+    for (std::size_t i=0; i<count; i++)
       {
-	colors [i].r = (Uint8)pal [i].r;
-	colors [i].g = (Uint8)pal [i].g;
-	colors [i].b = (Uint8)pal [i].b;
+	palette->colors [i].r = (Uint8)pal [from + i].r;
+	palette->colors [i].g = (Uint8)pal [from + i].g;
+	palette->colors [i].b = (Uint8)pal [from + i].b;
+	palette->colors [i].unused = (Uint8)pal [from + i].a;
       }
-    SDL_SetPalette (m_surface, SDL_LOGPAL | SDL_PHYSPAL, colors, (int)from, (int)count);
+    palette->ncolors = count;
   }
   // ----------------------------------------------------------------------
   void sdl_picture_c::_put_pixel (unsigned int x, unsigned int y, const rgba_s& color)
@@ -111,6 +110,10 @@ namespace pict
     return m_surface;
   }
   // ======================================================================
+  sdl_allocator_c::sdl_allocator_c ()
+  {
+  }
+  // ----------------------------------------------------------------------
   abstract_picture_c* sdl_allocator_c::create (unsigned int width,
 					       unsigned int height,
 					       bits_per_pixel_t bpp)

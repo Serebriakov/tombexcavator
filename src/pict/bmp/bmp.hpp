@@ -47,11 +47,12 @@ namespace pict
     bmp_compression_method_t compression_method;
     unsigned int             colors_in_palette;
     unsigned int             rgb_length;
+    bool                     top_down;
   };
 
   PICT_API void load_bmp_info (bsw::input_stream_c& inp, bmp_info_s& bi);
 
-  PICT_API abstract_picture_c* load_bmp (bsw::input_stream_c& inp, allocator_c* allocator);
+  PICT_API abstract_picture_c* load_bmp (bsw::input_stream_c& inp, allocator_c* allocator, bmp_info_s& bmp_info);
 
   PICT_API std::ostream& operator << (std::ostream& os, 
 				      const bmp_kind_t& kind);

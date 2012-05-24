@@ -13,6 +13,8 @@ namespace pict
   class PICT_API sdl_allocator_c : public allocator_c
   {
   public:
+    sdl_allocator_c ();
+
     abstract_picture_c* create (unsigned int width,
 				unsigned int height,
 				bits_per_pixel_t bpp);

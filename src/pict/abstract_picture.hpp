@@ -12,6 +12,14 @@ namespace pict
 {
   struct PICT_API rgba_s
   {
+    rgba_s ()
+      : r (0),
+	g (0),
+	b (0),
+	a (0) 
+    {
+    }
+
     int r;
     int g;
     int b;

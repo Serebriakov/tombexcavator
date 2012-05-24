@@ -2,6 +2,10 @@
 
 namespace pict
 {
+  allocator_c::allocator_c ()
+  {
+  }
+  // --------------------------------------------------
   allocator_c::~allocator_c ()
   {
   }

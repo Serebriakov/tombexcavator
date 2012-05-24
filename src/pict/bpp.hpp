@@ -9,6 +9,7 @@ namespace pict
   enum bits_per_pixel_t
     {
       eBPP1,
+      eBPP2,
       eBPP4,
       eBPP8,
       eBPP16,

@@ -28,6 +28,7 @@ namespace bsw
     file_size_t tell ();
     
     void seek (file_size_t pos, whence_t whence);
+    void seek (file_size_t pos);
     
     std::size_t read (char* buffer, std::size_t length);
 

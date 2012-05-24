@@ -54,6 +54,11 @@ namespace bsw
       }
   }
   // --------------------------------------------------------------------
+  void input_stream_decorator_c::seek (file_size_t pos)
+  {
+    this->seek (pos, eFROM_START);
+  }
+  // --------------------------------------------------------------------
   std::size_t input_stream_decorator_c::read (char* buffer, std::size_t length)
   {
     return m_is.read (buffer, length);
