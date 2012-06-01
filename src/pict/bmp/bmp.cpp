@@ -30,7 +30,7 @@ namespace pict
   }
   template <int CHUNKS>
   class loader_c;
-
+  
   template <>
   class loader_c <8>
   {
@@ -126,7 +126,7 @@ namespace pict
 	}
       if (m_current >= m_row_size)
 	{
-	  throw std::runtime_error ("next_pixel aout of bounds");
+	  throw std::runtime_error ("next_pixel is out of bounds");
 	}
       pixel = loader_c <BITS>::load (m_row [m_current], m_chunk);
       m_chunk += BITS;
@@ -145,8 +145,130 @@ namespace pict
     std::vector <uint8_t>          m_row;
     unsigned int                   m_current;
     unsigned int                   m_chunk;
-    
   };
+  // ====================================================================================
+  // rgb loaders
+  template <int BITS>
+  struct rgb_traits_s;
+
+#define DEFINE_RGB_TRAITS(BITS, WORD, RMASK, GMASK, BMASK, AMASK, RSHIFT, GSHIFT, BSHIFT, ASHIFT, SCALE) \
+  template <>								\
+  struct rgb_traits_s <BITS>						\
+  {									\
+    typedef WORD word_t;						\
+    static word_t rmask;						\
+    static word_t gmask;						\
+    static word_t bmask;						\
+    static word_t amask;						\
+    static word_t rshift;						\
+    static word_t gshift;						\
+    static word_t bshift;						\
+    static word_t ashift;						\
+    static word_t scale;						\
+  };									\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::rmask = RMASK;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::gmask = GMASK;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::bmask = BMASK;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::amask = AMASK;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::rshift = RSHIFT;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::gshift = GSHIFT;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::bshift = BSHIFT;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::ashift = ASHIFT;	\
+    rgb_traits_s<BITS>::word_t rgb_traits_s<BITS>::scale  = SCALE
+
+
+  DEFINE_RGB_TRAITS (16, uint16_t, 0x7C00, 0x03E0, 0x001F, 0x8000, 10, 5, 0, 14, 3);
+  // little endian
+  DEFINE_RGB_TRAITS (24, uint32_t, 0x00FF0000, 0x0000FF00, 0x000000FF, 0, 16, 8, 0, 0, 0);
+  DEFINE_RGB_TRAITS (32, uint32_t, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000, 16, 8, 0, 24, 0);
+	
+  // ====================================================================================
+  template <int BITS>
+  class rbg_pixels_reader_c 
+  {
+    enum
+      {
+	BYTES = (BITS >> 3)
+      };
+  public:
+    typedef rgba_s pixel_t;
+  public:
+    rbg_pixels_reader_c (bsw::input_stream_decorator_c& isd, unsigned int width)
+      : m_isd      (isd),
+	m_row_size (pixels_row_size (BITS, width)),
+	m_row      (m_row_size, 0),
+	m_current  (0)
+    {
+      //std::cout << "Width: " << width << " RS: " << m_row_size << " BYTES: " << BYTES << std::endl;
+    }
+    // ---------------------------------------------------------------------------
+    void next_pixel (pixel_t& pixel)
+    {
+      if (m_current + BYTES > m_row_size)
+	{
+	  throw std::runtime_error ("next_pixel is out of bounds");
+	}
+      typedef typename rgb_traits_s <BITS>::word_t word_t;
+      union 
+      {
+	uint8_t* In;
+	word_t* Out;
+      } conv_alias;
+      conv_alias.In = &m_row [m_current];
+      word_t v = *conv_alias.Out;
+      
+      pixel.r = (((v & rgb_traits_s <BITS>::rmask) >> rgb_traits_s <BITS>::rshift) & 0xFF) 
+	<< rgb_traits_s <BITS>::scale;
+      pixel.g = (((v & rgb_traits_s <BITS>::gmask) >> rgb_traits_s <BITS>::gshift) & 0xFF) 
+	<< rgb_traits_s <BITS>::scale;
+      pixel.b = (((v & rgb_traits_s <BITS>::bmask) >> rgb_traits_s <BITS>::bshift) & 0xFF) 
+	<< rgb_traits_s <BITS>::scale;
+      pixel.a = (((v & rgb_traits_s <BITS>::amask) >> rgb_traits_s <BITS>::ashift) & 0xFF) 
+	<< rgb_traits_s <BITS>::scale;
+      /*
+      int r = pixel.r & 0xFF;
+      int g = pixel.g & 0xFF;
+      int b = pixel.b & 0xFF;
+      int a = pixel.a & 0xFF;
+
+      std::cout << std::hex << v 
+		<< " " << r << "," << g << "," << b << "," << a
+		<< std::endl;
+      */
+      m_current += BYTES;
+    }
+
+    void load_row ()
+    {
+      m_current = 0;
+      m_isd.read ( (char*)&m_row [0], m_row_size);
+    }
+  private:
+    bsw::input_stream_decorator_c& m_isd;
+  protected:
+    unsigned int                   m_row_size;
+    std::vector <uint8_t>          m_row;
+    unsigned int                   m_current;
+  };
+
+  template <int BITS>
+  struct simple_reader_traits_s;
+
+#define DEFINE_READER(BITS, NAME)					\
+  template <>								\
+  struct simple_reader_traits_s <BITS>					\
+  {									\
+    typedef NAME<BITS> reader_t;					\
+  }
+
+
+  DEFINE_READER (1 , simple_pixels_reader_c);
+  DEFINE_READER (2 , simple_pixels_reader_c);
+  DEFINE_READER (4 , simple_pixels_reader_c);
+  DEFINE_READER (8 , simple_pixels_reader_c);
+  DEFINE_READER (16, rbg_pixels_reader_c);
+  DEFINE_READER (24, rbg_pixels_reader_c);
+  DEFINE_READER (32, rbg_pixels_reader_c);
   // ====================================================================================
   struct bmpfile_header_s 
   {
@@ -603,7 +725,8 @@ namespace pict
   template <int BITS>
   void uncompressed_loader (bsw::input_stream_decorator_c& isd, abstract_picture_c* img, const bmp_info_s& bi)
   {
-    simple_pixels_reader_c <BITS> rdr (isd, bi.width);
+    typedef typename simple_reader_traits_s <BITS>::reader_t reader_t;
+    reader_t rdr (isd, bi.width);
     for (unsigned int y=0; y<bi.height; y++)
       {
 	rdr.load_row ();
@@ -611,7 +734,7 @@ namespace pict
 
 	for (unsigned int x=0; x<bi.width; x++)
 	  {
-	    typename simple_pixels_reader_c <BITS>::pixel_t pixel;
+	    typename reader_t::pixel_t pixel;
 	    rdr.next_pixel (pixel);
 	    img->put_pixel (x, inv_y, pixel);
 	  }
@@ -634,7 +757,7 @@ namespace pict
       }
     
     unsigned int num_colors = (unsigned int)(bi.offset_to_data - curr_pos) / bi.rgb_length;
-    if (num_colors > bi.colors_in_palette)
+    if ((bi.colors_in_palette > 0) && (num_colors > bi.colors_in_palette))
       {
 	std::ostringstream os;
 	os << "BMP file " << isd.name () << " is corrupted. Number of colors mismatch." 
@@ -654,6 +777,8 @@ namespace pict
 	break;
 
       case eBPP16:
+	bpp = eBPP16;
+	break;
       case eBPP24:
       case eBPP32:
 	bpp = eBPP32;
@@ -691,6 +816,15 @@ namespace pict
 	break;
       case eBPP8:
 	uncompressed_loader <8> (isd, img, bi);
+	break;
+      case eBPP16:
+	uncompressed_loader <16> (isd, img, bi);
+	break;
+      case eBPP24:
+	uncompressed_loader <24> (isd, img, bi);
+	break;
+      case eBPP32:
+	uncompressed_loader <32> (isd, img, bi);
 	break;
       }
     return img;

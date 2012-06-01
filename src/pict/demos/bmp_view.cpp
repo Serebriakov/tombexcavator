@@ -49,7 +49,15 @@ void view_sdl (SDL_Surface* image, pict::bmp_info_s bi)
 	    }
 	}
       
-      SDL_SetPalette (screen, SDL_LOGPAL|SDL_PHYSPAL, image->format->palette->colors, 0, image->format->palette->ncolors);
+      if (image->format->BitsPerPixel <= 8)
+	{
+	  // set palette if needed
+	  SDL_SetPalette (screen, 
+			  SDL_LOGPAL|SDL_PHYSPAL, 
+			  image->format->palette->colors, 
+			  0, 
+			  image->format->palette->ncolors);
+	}
       SDL_BlitSurface (image, &src, screen, &dst);
 
       if(SDL_MUSTLOCK (screen)) 

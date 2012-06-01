@@ -19,7 +19,7 @@ namespace pict
 	a (0) 
     {
     }
-
+    
     int r;
     int g;
     int b;

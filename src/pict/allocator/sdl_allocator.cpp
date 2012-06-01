@@ -66,32 +66,30 @@ namespace pict
     
     const int bpp = m_surface->format->BytesPerPixel;
     Uint8 *p = (Uint8 *)m_surface->pixels + y*m_surface->pitch + x*bpp;
-    Uint32 pixel = 0;
+    Uint32 pixel = SDL_MapRGBA (m_surface->format, color.r, color.g, color.b, color.a);
     
-    switch (bpp)
+    switch(bpp) 
       {
-	case 2:
-	  pixel = (color.r & 32);
-	  pixel = (pixel << 5) | (color.g & 32);
-	  pixel = (pixel << 5) | (color.b & 32);
-	  *(Uint16 *)p = (Uint16)pixel;
-	  break;
-
-    case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN) 
-	  {
-	    p[0] = (Uint8)(color.r);
-	    p[1] = (Uint8)color.g;
-	    p[2] = (Uint8)color.b;
-	  } 
-	else 
-	  {
-            p[0] = (Uint8)color.r;
-            p[1] = (Uint8)color.g;
-            p[2] = (Uint8)color.b;
-	  }
+      case 1:
+        *p = pixel;
         break;
-
+	
+      case 2:
+        *(Uint16 *)p = pixel;
+        break;
+	
+      case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+	  p[0] = (pixel >> 16) & 0xff;
+	  p[1] = (pixel >> 8) & 0xff;
+	  p[2] = pixel & 0xff;
+        } else {
+	  p[0] = pixel & 0xff;
+	  p[1] = (pixel >> 8) & 0xff;
+	  p[2] = (pixel >> 16) & 0xff;
+        }
+        break;
+	
     case 4:
         *(Uint32 *)p = pixel;
         break;
