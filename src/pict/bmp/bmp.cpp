@@ -147,6 +147,164 @@ namespace pict
     unsigned int                   m_chunk;
   };
   // ====================================================================================
+  template <int BITS>
+  class rle_pixels_reader_c
+  {
+  public:
+    typedef uint8_t pixel_t;
+  public:
+    rle_pixels_reader_c (bsw::input_stream_decorator_c& isd)
+      : m_isd (isd),
+	m_current_x (0),
+	m_current_y (0),
+	m_state     (eUNKNOWN),
+	m_run       (0),
+	m_in_run    (0),
+	m_value     (0),
+	m_chunk     (0),
+	m_need_padding (false)
+    {
+      
+    }
+    bool next (unsigned int& x, unsigned int& y, pixel_t& pixel)
+    {
+      
+      do
+	{
+	  if (!_load_state ())
+	    {
+	      return false;
+	    }
+	} while (m_state == eCONTROL);
+      
+      if (m_state == eRUN)
+	{
+	  if (m_in_run < m_run)
+	    {
+	      _load_value (pixel);
+	      x = m_current_x++;
+	      y = m_current_y;
+	      m_in_run++;
+	    }
+	  if (m_in_run == m_run)
+	    {
+	      m_state = eUNKNOWN;
+	      return true;
+	    }
+	  
+	}
+      else
+	{
+	  if (m_state == eLITERAL)
+	    {
+	     x = m_current_x++;
+	     y = m_current_y;
+	     bool finished = _load_value (pixel);
+	     m_in_run++;
+	     if (m_in_run == m_run)
+	       {
+		 m_state = eUNKNOWN;
+		 if (m_need_padding)
+		   {
+		     m_isd >> m_value;
+		   }
+		 return true;
+	       }
+	     if (finished)
+	       {
+		 m_isd >> m_value;
+	       }
+	     
+	    }
+	}
+      return true;
+    }
+  private:
+    bool _load_value (pixel_t& pixel)
+    {
+      pixel = loader_c <BITS>::load (m_value, m_chunk);
+      m_chunk += BITS;
+      if (m_chunk >= 8)
+	{
+	  m_chunk = 0;
+	  return true;
+	}
+      return false;
+    }
+    bool _load_state ()
+    {
+      
+      if (m_state == eUNKNOWN || m_state == eCONTROL)
+	{
+	  uint8_t cntrl;
+	  m_isd >> cntrl;
+	  if (cntrl == 0)
+	    {
+	      uint8_t count;
+	      m_isd >> count;
+	      if (count == 1)
+		{
+		  m_state = eCONTROL;
+		  return false;
+		}
+	      if (count == 0)
+		{
+		  m_state = eCONTROL;
+		  m_current_x = 0;
+		  m_current_y++;
+		  return true;
+		}
+	      if (count == 2)
+		{
+		  uint8_t x, y;
+		  m_isd >> x >> y;
+		  m_state = eCONTROL;
+		  m_current_x += x;
+		  m_current_y += y;
+		  return true;
+		}
+	      m_state = eLITERAL;
+	      m_run = count;
+	      unsigned int pixels = (BITS == 4) ? m_run / 2 : m_run;
+	      m_need_padding = ((pixels & 1) == 1);
+	      m_run = count;
+	      m_in_run = 0;
+	      m_chunk = 0;
+	      m_isd >> m_value;
+	      return true;
+	    }
+	  else
+	    {
+	      m_state = eRUN;
+	      m_run = cntrl;
+	      m_in_run = 0;
+	      m_isd >> m_value;
+	      m_chunk = 0;
+	      return true;
+	    }
+	}
+      return true;
+    }
+  private:
+    enum state_t
+      {
+	eUNKNOWN,
+	eLITERAL,
+	eRUN,
+	eCONTROL
+      };
+  private:
+    bsw::input_stream_decorator_c& m_isd;
+    unsigned int m_current_x;
+    unsigned int m_current_y;
+    state_t      m_state;
+    unsigned int m_run;
+    unsigned int m_in_run;
+    uint8_t      m_value;
+    int          m_chunk;
+    bool         m_need_padding;
+  };
+  // ====================================================================================
   // rgb loaders
   template <int BITS>
   struct rgb_traits_s;
@@ -834,8 +992,6 @@ namespace pict
 	      }
 	  }
       }
-    std::cout << bi.kind << std::endl;
-
     bi.offset_to_data = fh.bmp_offset;
     uint32_t sz;
     isd >> sz;
@@ -900,6 +1056,24 @@ namespace pict
 	  {
 	    typename reader_t::pixel_t pixel;
 	    rdr.next_pixel (pixel);
+	    img->put_pixel (x, inv_y, pixel);
+	  }
+      }
+  }
+  // --------------------------------------------------------------------------
+  template <int BITS>
+  void compressed_loader (bsw::input_stream_decorator_c& isd, abstract_picture_c* img, const bmp_info_s& bi)
+  {
+    typedef rle_pixels_reader_c <BITS> reader_t;
+    reader_t rdr (isd);
+    unsigned int x;
+    unsigned int y;
+    typename reader_t::pixel_t pixel;
+    while (rdr.next (x, y, pixel))
+      {
+	unsigned int inv_y = bi.top_down ? bi.height - 1 - y : y;
+	if (x < bi.width && y < bi.height)
+	  {
 	    img->put_pixel (x, inv_y, pixel);
 	  }
       }
@@ -976,10 +1150,38 @@ namespace pict
 	uncompressed_loader <2> (isd, img, bi);
 	break;
       case eBPP4:
-	uncompressed_loader <4> (isd, img, bi);
+	switch (bi.compression_method)
+	  {
+	  case eBMP_RLE4:
+	    compressed_loader <4> (isd, img, bi);
+	    break;
+	  case eBMP_RGB:
+	    uncompressed_loader <4> (isd, img, bi);
+	    break;
+	  default:
+	    {
+	      std::ostringstream os;
+	      os << "Unsupported compression method " << bi.compression_method << " for 4-bit depth BMP";
+	      throw std::runtime_error (os.str ());
+	    }
+	  }
 	break;
       case eBPP8:
-	uncompressed_loader <8> (isd, img, bi);
+	switch (bi.compression_method)
+	  {
+	  case eBMP_RLE8:
+	    compressed_loader <8> (isd, img, bi);
+	    break;
+	  case eBMP_RGB:
+	    uncompressed_loader <8> (isd, img, bi);
+	    break;
+	  default:
+	    {
+	      std::ostringstream os;
+	      os << "Unsupported compression method " << bi.compression_method << " for 8-bit depth BMP";
+	      throw std::runtime_error (os.str ());
+	    }
+	  }
 	break;
       case eBPP16:
 	uncompressed_loader <16> (isd, img, bi);
