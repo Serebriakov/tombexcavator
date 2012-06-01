@@ -876,11 +876,13 @@ namespace pict
 	  v4_info_header_s ih (isd, sz);
 	  ih (bi);
 	}
+	break;
       case 124:
 	{
 	  v5_info_header_s ih (isd, sz);
 	  ih (bi);
 	}
+	break;
       }
   }
   // --------------------------------------------------------------------------
