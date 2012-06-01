@@ -285,14 +285,14 @@ namespace pict
     }
   };
 
-  struct os2_info_header_s 
+  struct core_win3_info_header_s 
   {
     uint32_t  biSize;
     int32_t   biWidth;
     int32_t   biHeight; 
     uint16_t  biPlanes; 
     uint16_t  biBitCount;
-    os2_info_header_s  (bsw::input_stream_decorator_c& icd, uint32_t size)
+    core_win3_info_header_s  (bsw::input_stream_decorator_c& icd, uint32_t size)
       : biSize (size)
     {
       icd >> biWidth
@@ -348,9 +348,168 @@ namespace pict
     }
   };
 
+  struct os2_v1_info_header_s 
+  {
+    uint32_t  biSize;
+    int16_t   biWidth;
+    int16_t   biHeight; 
+    uint16_t  biPlanes; 
+    uint16_t  biBitCount;
+    os2_v1_info_header_s  (bsw::input_stream_decorator_c& icd, uint32_t size)
+      : biSize (size)
+    {
+      icd >> biWidth
+	  >> biHeight
+	  >> biPlanes
+	  >> biBitCount;
+    }
+
+    void operator () (bmp_info_s& bi)
+    {
+      bi.width  = biWidth;
+      if (biHeight < 0)
+	{
+	  bi.height = -biHeight;
+	  bi.top_down = false;
+	}
+      else
+	{
+	  bi.height   = biHeight;
+	  bi.top_down = true;
+	}
+      switch (biBitCount)
+	{
+	case 1:
+	  bi.bpp = eBPP1;
+	  bi.colors_in_palette = 2;
+	  break;
+	case 2:
+	  bi.bpp = eBPP2;
+	  bi.colors_in_palette = 4;
+	  break;
+	case 4:
+	  bi.bpp = eBPP4;
+	  bi.colors_in_palette = 16;
+	  break;
+	case 8:
+	  bi.bpp = eBPP8;
+	  bi.colors_in_palette = 256;
+	  break;
+	default:
+	  {
+	    std::ostringstream os;
+	    os << "Unsupported color depth " << biBitCount;
+	    throw std::runtime_error (os.str ());
+	  }
+	}
+      bi.compression_method = eBMP_RGB;
+      bi.rgb_length         = 3;
+    }
+  };
+
+  struct os2_v2_info_header_s
+  {
+    uint32_t  Size;             /* Size of this structure in bytes */
+    uint32_t  Width;            /* Bitmap width in pixels */
+    uint32_t  Height;           /* Bitmap height in pixel */
+    int16_t   NumPlanes;        /* Number of bit planes (color depth) */
+    int16_t   BitsPerPixel;     /* Number of bits per pixel per plane */
+    /* Fields added for OS/2 2.x follow this line */
+    uint32_t  Compression;      /* Bitmap compression scheme */
+    uint32_t  ImageDataSize;    /* Size of bitmap data in bytes */
+    uint32_t  XResolution;      /* X resolution of display device */
+    uint32_t  YResolution;      /* Y resolution of display device */
+    uint32_t  ColorsUsed;       /* Number of color table indices used */
+    uint32_t  ColorsImportant;  /* Number of important color indices */
+    int16_t   Units;            /* Type of units used to measure resolution */
+    int16_t   Reserved;         /* Pad structure to 4-byte boundary */
+    int16_t   Recording;        /* Recording algorithm */
+    int16_t   Rendering;        /* Halftoning algorithm used */
+    uint32_t  Size1;            /* Reserved for halftoning algorithm use */
+    uint32_t  Size2;            /* Reserved for halftoning algorithm use */
+    uint32_t  ColorEncoding;    /* Color model used in bitmap */
+    uint32_t  Identifier;       /* Reserved for application use */
+
+    os2_v2_info_header_s (bsw::input_stream_decorator_c& icd, uint32_t size)
+      : Size (size)
+    {
+      icd >> Width;            
+      icd >> Height;           
+      icd >> NumPlanes;        
+      icd >> BitsPerPixel;     
+      icd >> Compression;
+      icd >> ImageDataSize;
+      icd >> XResolution;
+      icd >> YResolution;
+      icd >> ColorsUsed;
+      icd >> ColorsImportant;
+      icd >> Units;
+      icd >> Reserved;
+      icd >> Recording;
+      icd >> Rendering;
+      icd >> Size1;
+      icd >> Size2;
+      icd >> ColorEncoding;
+      icd >> Identifier;
+    }
+
+    void operator () (bmp_info_s& bi)
+    {
+      bi.width  = Width;
+      bi.height   = Height;
+      bi.top_down = true;
+
+      switch (BitsPerPixel)
+	{
+	case 1:
+	  bi.bpp = eBPP1;
+	  bi.colors_in_palette = 2;
+	  break;
+	case 4:
+	  bi.bpp = eBPP4;
+	  bi.colors_in_palette = 16;
+	  break;
+	case 8:
+	  bi.bpp = eBPP8;
+	  bi.colors_in_palette = 256;
+	  break;
+	case 24:
+	  bi.bpp = eBPP24;
+	  bi.colors_in_palette = 0;
+	  break;
+	default:
+	  {
+	    std::ostringstream os;
+	    os << "Unsupported color depth " << BitsPerPixel;
+	    throw std::runtime_error (os.str ());
+	  }
+	}
+      switch (Compression)
+	{
+	case 0:
+	  bi.compression_method = eBMP_RGB;
+	  break;
+	case 1:
+	  bi.compression_method = eBMP_RLE8;
+	  break;
+	case 2:
+	  bi.compression_method = eBMP_RLE4;
+	  break;
+	default:
+	  {
+	    std::ostringstream os;
+	    os << "Unsupported compression method " << Compression;
+	    throw std::runtime_error (os.str ());
+	  }
+	}
+      bi.rgb_length  = 4;
+    }
+  };
+  
+
   struct core_info_header_s 
   {
-    os2_info_header_s biOS2Header;
+    core_win3_info_header_s biOS2Header;
 
     uint32_t biCompression;
     uint32_t biSizeImage;
@@ -506,11 +665,12 @@ namespace pict
   struct v4_info_header_s 
   {
     v3_info_header_s bV3InfoHeader;
-    uint32_t        bV4CSType;
+    uint32_t         bV4CSType;
     ciexyz_tripple_s bV4Endpoints;
-    uint32_t        bV4GammaRed;
-    uint32_t        bV4GammaGreen;
-    uint32_t        bV4GammaBlue;
+    uint32_t         bV4GammaRed;
+    uint32_t         bV4GammaGreen;
+    uint32_t         bV4GammaBlue;
+
     v4_info_header_s (bsw::input_stream_decorator_c& icd, uint32_t size)
       : bV3InfoHeader (icd, size)
     {
@@ -527,11 +687,11 @@ namespace pict
 
   struct v5_info_header_s  
   {
-    v4_info_header_s  bV4InfoHeader;
-    uint32_t        bV5Intent;
-    uint32_t        bV5ProfileData;
-    uint32_t        bV5ProfileSize;
-    uint32_t        bV5Reserved;
+    v4_info_header_s bV4InfoHeader;
+    uint32_t         bV5Intent;
+    uint32_t         bV5ProfileData;
+    uint32_t         bV5ProfileSize;
+    uint32_t         bV5Reserved;
 
     v5_info_header_s (bsw::input_stream_decorator_c& icd, uint32_t size)
       : bV4InfoHeader (icd, size)
@@ -674,6 +834,8 @@ namespace pict
 	      }
 	  }
       }
+    std::cout << bi.kind << std::endl;
+
     bi.offset_to_data = fh.bmp_offset;
     uint32_t sz;
     isd >> sz;
@@ -681,13 +843,13 @@ namespace pict
       {
       case 12:
 	{
-	  os2_info_header_s ih (isd, sz);
+	  os2_v1_info_header_s ih (isd, sz);
 	  ih (bi);
 	}
 	break;
       case 64:
 	{
-	  core_info_header_s ih (isd, sz);
+	  os2_v2_info_header_s ih (isd, sz);
 	  ih (bi);
 	}
 	break;
@@ -757,7 +919,7 @@ namespace pict
       }
     
     unsigned int num_colors = (unsigned int)(bi.offset_to_data - curr_pos) / bi.rgb_length;
-    if ((bi.colors_in_palette > 0) && (num_colors > bi.colors_in_palette))
+    if ((bi.colors_in_palette > 0) && (num_colors < bi.colors_in_palette))
       {
 	std::ostringstream os;
 	os << "BMP file " << isd.name () << " is corrupted. Number of colors mismatch." 
