@@ -33,30 +33,6 @@ include (build)
 
 enable_testing()
 
-# -------------------------------------------------------------
-set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-set (ONYX_ROOT ${CMAKE_SOURCE_DIR})
-set (ONYX_SRC  ${CMAKE_SOURCE_DIR}/src)
-set (ONYX_THIRDPARTY  ${ONYX_SRC}/thirdparty)
-
-set (ONYX_INCLUDE ${ONYX_SRC} ${ONYX_THIRDPARTY} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR})
-
-set (modules
-  westwood
-
-  bsw
-  pict
-  thirdparty/expat
-  thirdparty/libz
-)
-
-foreach (module ${modules})
-  add_subdirectory(${ONYX_SRC}/${module} obj/${module})
-endforeach ()
-
 # --------------------------------------------------------------
 # configure
 # --------------------------------------------------------------
@@ -79,3 +55,29 @@ else ()
 endif ()
 
 configure_file (${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+
+# -------------------------------------------------------------
+set (CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+set (ONYX_ROOT ${CMAKE_SOURCE_DIR})
+set (ONYX_SRC  ${CMAKE_SOURCE_DIR}/src)
+set (ONYX_THIRDPARTY  ${ONYX_SRC}/thirdparty)
+
+set           (ONYX_INCLUDE           ${ONYX_SRC}           ${ONYX_THIRDPARTY}
+${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${CMAKE_BINARY_DIR} ${SDL_INCLUDE_DIR} ${QT_INCLUDE_DIR})
+
+set (modules
+  westwood
+
+  bsw
+  pict
+  thirdparty/expat
+  thirdparty/libz
+)
+
+foreach (module ${modules})
+  add_subdirectory(${ONYX_SRC}/${module} obj/${module})
+endforeach ()
+

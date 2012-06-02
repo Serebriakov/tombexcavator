@@ -1,10 +1,12 @@
-#include "pict/allocator/sdl_allocator.hpp"
+#include "config.h"
 
 #if defined(TOMB_EXCAVATOR_WITH_SDL)
 #include <stdexcept>
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <assert.h>
 #include <cstring>
+
+#include "pict/allocator/sdl_allocator.hpp"
 
 namespace pict
 {

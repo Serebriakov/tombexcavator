@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <sstream>
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "pict/bmp/bmp.hpp"
 #include "pict/allocator/sdl_allocator.hpp"

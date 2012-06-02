@@ -99,7 +99,6 @@ FIND_LIBRARY(SDL_LIBRARY_TEMP
 
 #MESSAGE("SDL_LIBRARY_TEMP is ${SDL_LIBRARY_TEMP}")
 
-IF(NOT SDL_BUILDING_LIBRARY)
   IF(NOT ${SDL_INCLUDE_DIR} MATCHES ".framework")
     # Non-OS X framework versions expect you to also dynamically link to 
     # SDLmain. This is mainly for Windows and OS X. Other (Unix) platforms 
@@ -117,7 +116,6 @@ IF(NOT SDL_BUILDING_LIBRARY)
       /opt
     )
   ENDIF(NOT ${SDL_INCLUDE_DIR} MATCHES ".framework")
-ENDIF(NOT SDL_BUILDING_LIBRARY)
 
 # SDL may require threads on your system.
 # The Apple build may not need an explicit flag because one of the 
@@ -136,13 +134,6 @@ ENDIF(MINGW)
 
 SET(SDL_FOUND "NO")
 IF(SDL_LIBRARY_TEMP)
-  # For SDLmain
-  IF(NOT SDL_BUILDING_LIBRARY)
-    IF(SDLMAIN_LIBRARY)
-      SET(SDL_LIBRARY_TEMP ${SDLMAIN_LIBRARY} ${SDL_LIBRARY_TEMP})
-    ENDIF(SDLMAIN_LIBRARY)
-  ENDIF(NOT SDL_BUILDING_LIBRARY)
-
   # For OS X, SDL uses Cocoa as a backend so it must link to Cocoa.
   # CMake doesn't display the -framework Cocoa string in the UI even 
   # though it actually is there if I modify a pre-used variable.
