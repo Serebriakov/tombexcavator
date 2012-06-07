@@ -14,6 +14,14 @@ set (bmp_hdr
   bmp/bmp.hpp
 )
 
+set (pcx_src
+    pcx/pcx.cpp
+)
+
+set (pcx_hdr
+    pcx/pcx.hpp
+)   
+
 set (generic_src
   abstract_picture.cpp
   bpp.cpp
@@ -30,7 +38,7 @@ set (generic_hdr
 # housekeeping
 # ========================
 
-set (modules generic allocator bmp)
+set (modules generic allocator bmp pcx)
 
 set (src )
 set (hdr )
